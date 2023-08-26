@@ -69,8 +69,23 @@ public class DepartmentController {
 
     // delete department by id
     @DeleteMapping("/{department_id}")
-    public void delete(@PathVariable int department_id) {
-        departmentRepository.deleteById(department_id);
+    public ResponseEntity<String> delete(@PathVariable int department_id) {
+        Optional<Department> departmentOptional = departmentRepository.findById(department_id);
+
+        if (departmentOptional.isPresent()) {
+            Department department = departmentOptional.get();
+
+            // Set the department to null for every employee associated with the department
+            for (Employee employee : department.getEmployees()) {
+                employee.setDepartment(null);
+                employeeRepository.save(employee);
+
+            }
+            departmentRepository.deleteById(department_id);
+
+            return ResponseEntity.ok("Department deleted successfully !");
+        }
+        return ResponseEntity.ok("Failed to delete department !");
     }
 
     //update a department
@@ -95,5 +110,24 @@ public class DepartmentController {
         departmentRepository.save(updateDepartment);
 
         return ResponseEntity.ok(updateDepartment);
+    }
+
+    // view the employees of the department
+    @GetMapping("/{department_id}/view-employees")
+    List<Employee> viewEmployees(@PathVariable int department_id){
+        Optional<Department> optionalDepartment = departmentRepository.findById(department_id);
+
+        // checks if the department exists
+        if(optionalDepartment.isEmpty()){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Department not found"
+            );
+        }
+
+        // modify the optional type to Department type
+        Department department= optionalDepartment.get();
+
+        return department.getEmployees();
+
     }
 }

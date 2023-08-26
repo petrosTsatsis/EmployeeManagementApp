@@ -37,8 +37,16 @@ public class ReviewController {
 
     // delete review by id
     @DeleteMapping("/{review_id}")
-    public void delete(@PathVariable int review_id) {
+    public ResponseEntity<String> delete(@PathVariable int review_id) {
+
+        Optional<Review> reviewOptional = reviewRepository.findById(review_id);
+
+        if(reviewOptional.isEmpty()){
+            return ResponseEntity.ok("Failed to delete review !");
+        }
+
         reviewRepository.deleteById(review_id);
+        return ResponseEntity.ok("Review successfully deleted ! ");
     }
 
     // add review to employee

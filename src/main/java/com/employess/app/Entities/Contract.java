@@ -25,7 +25,7 @@ public class Contract {
     @Column(name = "monthly_salary")
     private String monthlySalary;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "employee_id")
     @JsonBackReference
     private Employee employee;

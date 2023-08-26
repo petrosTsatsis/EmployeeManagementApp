@@ -73,8 +73,17 @@ public class EmployeeController {
 
     // delete employee by id
     @DeleteMapping("/{employee_id}")
-    public void delete(@PathVariable int employee_id) {
+    public ResponseEntity<String> delete(@PathVariable int employee_id) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employee_id);
+
+        if(employeeOptional.isEmpty()){
+            return ResponseEntity.ok("Failed to delete employee !");
+        }
+
         employeeRepository.deleteById(employee_id);
+        return ResponseEntity.ok("Employee successfully deleted ! ");
+
+
     }
 
     //update an employee
@@ -119,6 +128,12 @@ public class EmployeeController {
         }
 
         Employee employee = employeeOptional.get();
+
+        if( employee.getDepartment() == null){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "The employee must first be part of a department!"
+            );
+        }
 
         // initialize the employees list of the task if it's null
         if (task.getEmployees() == null) {

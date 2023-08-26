@@ -1,6 +1,11 @@
 package com.employess.app.Controllers;
 
+import com.employess.app.Entities.Department;
+import com.employess.app.Entities.Employee;
 import com.employess.app.Entities.Task;
+import com.employess.app.Entities.Training;
+import com.employess.app.Repositories.DepartmentRepository;
+import com.employess.app.Repositories.EmployeeRepository;
 import com.employess.app.Repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +23,12 @@ public class TaskController {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
     // get all tasks
     @GetMapping("")
     List<Task> getAllTasks(){
@@ -32,8 +43,30 @@ public class TaskController {
 
     // delete employee by id
     @DeleteMapping("/{task_id}")
-    public void delete(@PathVariable int task_id) {
-        taskRepository.deleteById(task_id);
+    public ResponseEntity<String> deleteTask( @PathVariable int task_id) {
+        Optional<Task> taskOptional = taskRepository.findById(task_id);
+        if (taskOptional.isPresent()) {
+            Task task = taskOptional.get();
+
+            // Disassociate task from employees
+            List<Employee> employees = task.getEmployees();
+            for (Employee employee : employees) {
+                employee.getTasks().remove(task);
+                employeeRepository.save(employee);
+            }
+
+            // Disassociate task from departments
+            List<Department> departments = task.getDepartments();
+            for (Department department : departments) {
+                department.getTasks().remove(task);
+                departmentRepository.save(department);
+            }
+
+            taskRepository.delete(task);
+
+            return ResponseEntity.ok("Task successfully deleted !");
+        }
+        return ResponseEntity.ok("Failed to delete task !");
     }
 
     //update a task

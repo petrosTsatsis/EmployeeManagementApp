@@ -22,7 +22,9 @@ public class Attendance {
     @Column(name = "clock_out")
     private String clockOut;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH
+    })
     @JoinColumn(name = "employee_id")
     @JsonBackReference
     private Employee employee;

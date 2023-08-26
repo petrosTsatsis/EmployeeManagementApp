@@ -20,11 +20,11 @@ public class Department {
     @Column(name = "number_of_employees")
     private int numberOfEmployees;
 
-    @OneToMany(mappedBy="department", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="department", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonBackReference
     private List<Employee> employees;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "department_tasks",
             joinColumns = @JoinColumn(name = "department_id"),

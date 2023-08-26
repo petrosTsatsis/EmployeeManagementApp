@@ -30,11 +30,11 @@ public class Task {
     @Column(name = "bonus")
     private String bonus;
 
-    @ManyToMany(mappedBy = "tasks", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "tasks")
     @JsonIgnore
     List<Employee> employees;
 
-    @ManyToMany(mappedBy = "tasks", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "tasks")
     @JsonIgnore
     List<Department> departments;
 

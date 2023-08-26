@@ -2,6 +2,7 @@ package com.employess.app.Controllers;
 
 import com.employess.app.Entities.Announcement;
 import com.employess.app.Entities.Attendance;
+import com.employess.app.Entities.Employee;
 import com.employess.app.Entities.Training;
 import com.employess.app.Repositories.AnnouncementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,16 @@ public class AnnouncementController {
 
     // delete announcement by id
     @DeleteMapping("/{announcement_id}")
-    public void delete(@PathVariable int announcement_id) {
+    public ResponseEntity<String> delete(@PathVariable int announcement_id) {
+
+        Optional<Announcement> announcementOptional = announcementRepository.findById(announcement_id);
+
+        if(announcementOptional.isEmpty()){
+            return ResponseEntity.ok("Failed to delete announcement !");
+        }
+
         announcementRepository.deleteById(announcement_id);
+        return ResponseEntity.ok("Announcement successfully deleted ! ");
     }
 
     // add an announcement

@@ -1,6 +1,7 @@
 package com.employess.app.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -29,8 +30,8 @@ public class Training{
     @Column(name = "trainer")
     private String trainer;
 
-    @OneToMany(mappedBy="training", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @OneToMany(mappedBy = "training", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIgnore
     private List<Employee> employees;
 
     public Training(String trainingTitle, String description, String startDate, String endDate, String trainer) {

@@ -1,7 +1,10 @@
 package com.employess.app.Controllers;
 
+import com.employess.app.Entities.Absence;
 import com.employess.app.Entities.Contract;
+import com.employess.app.Entities.Employee;
 import com.employess.app.Repositories.ContractRepository;
+import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,9 @@ public class ContractController {
     @Autowired
     private ContractRepository contractRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     // get all contracts
     @GetMapping("")
     List<Contract> getAllContracts(){
@@ -32,8 +38,25 @@ public class ContractController {
 
     // delete contract by id
     @DeleteMapping("/{contract_id}")
-    public void delete(@PathVariable int contract_id) {
-        contractRepository.deleteById(contract_id);
+    public ResponseEntity<String> delete(@PathVariable int contract_id) {
+        Optional<Contract> contractOptional = contractRepository.findById(contract_id);
+
+        if (contractOptional.isPresent()) {
+            Contract contract = contractOptional.get();
+
+            // Disassociate employees from absence
+            Employee employee = contract.getEmployee();
+            employee.setContract(null);
+            contract.setEmployee(null);
+            employeeRepository.save(employee);
+
+            contractRepository.deleteById(contract_id);
+
+            return ResponseEntity.ok("Contract successfully deleted !");
+
+        }
+
+        return ResponseEntity.ok("Failed to delete contract !");
     }
 
     //update a contract

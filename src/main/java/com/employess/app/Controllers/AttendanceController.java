@@ -1,9 +1,6 @@
 package com.employess.app.Controllers;
 
-import com.employess.app.Entities.Attendance;
-import com.employess.app.Entities.Contract;
-import com.employess.app.Entities.Employee;
-import com.employess.app.Entities.Review;
+import com.employess.app.Entities.*;
 import com.employess.app.Repositories.AttendanceRepository;
 import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +37,27 @@ public class AttendanceController {
 
     // delete attendance by id
     @DeleteMapping("/{attendance_id}")
-    public void delete(@PathVariable int attendance_id) {
-        attendanceRepository.deleteById(attendance_id);
+    public ResponseEntity<String> delete(@PathVariable int attendance_id) {
+
+        Optional<Attendance> attendanceOptional = attendanceRepository.findById(attendance_id);
+
+        if (attendanceOptional.isPresent()) {
+            Attendance attendance = attendanceOptional.get();
+
+            // Disassociate employees from attendance
+            Employee employee = attendance.getEmployee();
+            employee.setAttendance(null);
+            attendance.setEmployee(null);
+
+            employeeRepository.save(employee);
+
+            attendanceRepository.deleteById(attendance_id);
+
+            return ResponseEntity.ok("Attendance successfully deleted !");
+
+        }
+
+        return ResponseEntity.ok("Failed to delete attendance !");
     }
 
     // add an attendance

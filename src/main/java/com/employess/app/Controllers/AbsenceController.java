@@ -1,9 +1,6 @@
 package com.employess.app.Controllers;
 
-import com.employess.app.Entities.Absence;
-import com.employess.app.Entities.Announcement;
-import com.employess.app.Entities.Employee;
-import com.employess.app.Entities.Training;
+import com.employess.app.Entities.*;
 import com.employess.app.Repositories.AbsenceRepository;
 import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +36,25 @@ public class AbsenceController {
 
     // delete absence by id
     @DeleteMapping("/{absence_id}")
-    public void delete(@PathVariable int absence_id) {
-        absenceRepository.deleteById(absence_id);
+    public ResponseEntity<String> delete(@PathVariable int absence_id) {
+
+        Optional<Absence> absenceOptional = absenceRepository.findById(absence_id);
+
+        if (absenceOptional.isPresent()) {
+            Absence absence = absenceOptional.get();
+
+            // Disassociate employees from absence
+            Employee employee = absence.getEmployee();
+            employee.setAbsence(null);
+            absence.setEmployee(null);
+            employeeRepository.save(employee);
+
+            absenceRepository.deleteById(absence_id);
+
+            return ResponseEntity.ok("Absence successfully deleted !");
+
+        }
+        return ResponseEntity.ok("Failed to delete absence !");
     }
 
     //add an absence

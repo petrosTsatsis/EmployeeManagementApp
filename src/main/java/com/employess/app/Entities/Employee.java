@@ -36,11 +36,11 @@ public class Employee implements Serializable {
     @JsonManagedReference
     private Contract contract;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "employee_tasks",
             joinColumns = @JoinColumn(name = "employee_id"),
@@ -51,15 +51,19 @@ public class Employee implements Serializable {
     @JsonIgnore
     private List<Review> reviews;
 
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.DETACH)
+    @OneToOne(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH
+})
     @JsonManagedReference
     private Attendance attendance;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "training_id")
     private Training training;
 
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.DETACH)
+    @OneToOne(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH
+    })
     @JsonManagedReference
     private Absence absence;
 

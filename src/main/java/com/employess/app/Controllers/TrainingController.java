@@ -38,8 +38,26 @@ public class TrainingController {
 
     // delete training by id
     @DeleteMapping("/{training_id}")
-    public void delete(@PathVariable int training_id) {
-        trainingRepository.deleteById(training_id);
+    public ResponseEntity<String> delete(@PathVariable int training_id) {
+        Optional<Training> trainingOptional = trainingRepository.findById(training_id);
+
+        if (trainingOptional.isPresent()) {
+            Training training = trainingOptional.get();
+
+            // Disassociate employees from training
+            for (Employee employee : training.getEmployees()) {
+                employee.setTraining(null);
+                employeeRepository.save(employee);
+            }
+
+            // Clear the list of employees from training
+            training.getEmployees().clear();
+
+            trainingRepository.deleteById(training_id);
+
+            return ResponseEntity.ok("Training session succesfully deleted !");
+        }
+        return ResponseEntity.ok("Failed to delete training session !");
     }
 
     // add a training session

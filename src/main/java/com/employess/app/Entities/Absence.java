@@ -24,7 +24,9 @@ public class Absence {
     @Column(name = "reason")
     private String reason;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH
+})
     @JoinColumn(name = "employee_id")
     @JsonBackReference
     private Employee employee;
