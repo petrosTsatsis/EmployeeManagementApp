@@ -8,6 +8,7 @@ import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,18 +27,21 @@ public class DepartmentController {
     private EmployeeRepository employeeRepository;
 
     // get all departments
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Department> getAllDepartments(){
         return departmentRepository.findAll();
     }
 
     // get department by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{department_id}")
     Optional<Department> get(@PathVariable int department_id){
         return departmentRepository.findById(department_id);
     }
 
     // add department
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add-department")
     Department save(@Validated @RequestBody Department department){
         departmentRepository.save(department);
@@ -45,6 +49,7 @@ public class DepartmentController {
     }
 
     // add employee to department
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/{department_id}/employees/{employee_id}")
     Employee addEmployee(@PathVariable int department_id, @PathVariable int employee_id){
 
@@ -68,6 +73,7 @@ public class DepartmentController {
     }
 
     // delete department by id
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{department_id}")
     public ResponseEntity<String> delete(@PathVariable int department_id) {
         Optional<Department> departmentOptional = departmentRepository.findById(department_id);
@@ -89,6 +95,7 @@ public class DepartmentController {
     }
 
     //update a department
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{department_id}/update-department")
     public ResponseEntity<Department> updateDepartment(@PathVariable int department_id, @RequestBody Department departmentDetails){
 
@@ -113,6 +120,7 @@ public class DepartmentController {
     }
 
     // view the employees of the department
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{department_id}/view-employees")
     List<Employee> viewEmployees(@PathVariable int department_id){
         Optional<Department> optionalDepartment = departmentRepository.findById(department_id);

@@ -7,6 +7,7 @@ import com.employess.app.Repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,12 +30,14 @@ public class EmployeeController {
     private TaskRepository taskRepository;
 
     // get all employees
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
     // add an employee
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add-employee")
     Employee save(@Validated @RequestBody Employee employee){
         employeeRepository.save(employee);
@@ -42,12 +45,14 @@ public class EmployeeController {
     }
 
     // get employee by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{employee_id}")
     Optional<Employee> get(@PathVariable int employee_id){
         return employeeRepository.findById(employee_id);
     }
 
     // add contract to employee
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/{employee_id}/add-contract")
     Contract addContract(@PathVariable int employee_id, @RequestBody Contract contract){
 
@@ -72,6 +77,7 @@ public class EmployeeController {
     }
 
     // delete employee by id
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{employee_id}")
     public ResponseEntity<String> delete(@PathVariable int employee_id) {
         Optional<Employee> employeeOptional = employeeRepository.findById(employee_id);
@@ -87,6 +93,7 @@ public class EmployeeController {
     }
 
     //update an employee
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{employee_id}/update-employee")
     public ResponseEntity<Employee> updateEmployee(@PathVariable int employee_id, @RequestBody Employee employeeDetails){
 
@@ -116,6 +123,7 @@ public class EmployeeController {
 
 
     // add task to employee
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/{employee_id}/add-task")
     Task addTask(@PathVariable int employee_id, @RequestBody Task task){
 
@@ -163,6 +171,7 @@ public class EmployeeController {
         return task;
     }
 
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     //update an employee's task
     @PutMapping("/{employee_id}/{task_id}/update-task")
     public ResponseEntity<Task> updateTask(
@@ -202,6 +211,7 @@ public class EmployeeController {
     }
 
     // get the employee's reviews
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{employee_id}/view-reviews")
     List<Review> getAllReviews(@PathVariable int employee_id){
         Optional<Employee> optionalEmployee = employeeRepository.findById(employee_id);

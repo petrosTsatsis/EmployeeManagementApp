@@ -8,6 +8,7 @@ import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,18 +26,21 @@ public class ContractController {
     private EmployeeRepository employeeRepository;
 
     // get all contracts
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Contract> getAllContracts(){
         return contractRepository.findAll();
     }
 
     // get contract by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{contract_id}")
     Optional<Contract> get(@PathVariable int contract_id){
         return contractRepository.findById(contract_id);
     }
 
     // delete contract by id
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{contract_id}")
     public ResponseEntity<String> delete(@PathVariable int contract_id) {
         Optional<Contract> contractOptional = contractRepository.findById(contract_id);
@@ -60,6 +64,7 @@ public class ContractController {
     }
 
     //update a contract
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PutMapping("/{contract_id}/update-contract")
     public ResponseEntity<Contract> updateContract(@PathVariable int contract_id, @RequestBody Contract contractDetails){
 

@@ -6,6 +6,7 @@ import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,18 +25,21 @@ public class AttendanceController {
     private EmployeeRepository employeeRepository;
 
     // get all attendances
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Attendance> getAllAttendances(){
         return attendanceRepository.findAll();
     }
 
     // get attendance by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{attendance_id}")
     Optional<Attendance> get(@PathVariable int attendance_id){
         return attendanceRepository.findById(attendance_id);
     }
 
     // delete attendance by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @DeleteMapping("/{attendance_id}")
     public ResponseEntity<String> delete(@PathVariable int attendance_id) {
 
@@ -61,6 +65,7 @@ public class AttendanceController {
     }
 
     // add an attendance
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/add-attendance/employees/{employee_id}")
     Attendance save(@Validated @RequestBody Attendance attendance, @PathVariable int employee_id){
 
@@ -76,6 +81,7 @@ public class AttendanceController {
     }
 
     //update a review
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PutMapping("/{attendance_id}/update-attendance")
     public ResponseEntity<Attendance> updateAttendance(@PathVariable int attendance_id, @RequestBody Attendance attendanceDetails){
 

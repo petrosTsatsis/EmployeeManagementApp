@@ -10,6 +10,7 @@ import com.employess.app.Repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,18 +31,21 @@ public class TaskController {
     private DepartmentRepository departmentRepository;
 
     // get all tasks
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Task> getAllTasks(){
         return taskRepository.findAll();
     }
 
     // get task by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{task_id}")
     Optional<Task> get(@PathVariable int task_id){
         return taskRepository.findById(task_id);
     }
 
-    // delete employee by id
+    // delete task by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @DeleteMapping("/{task_id}")
     public ResponseEntity<String> deleteTask( @PathVariable int task_id) {
         Optional<Task> taskOptional = taskRepository.findById(task_id);
@@ -70,6 +74,7 @@ public class TaskController {
     }
 
     //update a task
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PutMapping("/{task_id}/update-task")
     public ResponseEntity<Task> updateTask(
             @PathVariable int task_id,

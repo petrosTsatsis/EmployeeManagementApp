@@ -6,6 +6,7 @@ import com.employess.app.Repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,18 +24,21 @@ public class AbsenceController {
     private EmployeeRepository employeeRepository;
 
     // get all absences
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Absence> getAllAbsences(){
         return absenceRepository.findAll();
     }
 
     //get absence by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{absence_id}")
     Optional<Absence> get(@PathVariable int absence_id){
         return absenceRepository.findById(absence_id);
     }
 
     // delete absence by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @DeleteMapping("/{absence_id}")
     public ResponseEntity<String> delete(@PathVariable int absence_id) {
 
@@ -58,6 +62,7 @@ public class AbsenceController {
     }
 
     //add an absence
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/add-absence")
     Absence addAbsence(@RequestBody Absence absence) {
         int employeeId = absence.getEmployee().getId(); // Assuming Employee has an 'id' field
@@ -83,6 +88,7 @@ public class AbsenceController {
     }
 
     // update an absence
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PutMapping("/{absence_id}/update-absence")
     public ResponseEntity<Absence> updateAbsence(@PathVariable int absence_id, @RequestBody Absence absenceDetails){
 

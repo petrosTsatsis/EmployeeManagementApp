@@ -8,6 +8,7 @@ import com.employess.app.Repositories.AnnouncementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,6 +23,7 @@ public class AnnouncementController {
     private AnnouncementRepository announcementRepository;
 
     // get all announcements
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Announcement> getAllAnnouncements(){
         return announcementRepository.findAll();
@@ -29,12 +31,14 @@ public class AnnouncementController {
 
     // get announcement by id
     @GetMapping("/{announcement_id}")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     Optional<Announcement> get(@PathVariable int announcement_id){
         return announcementRepository.findById(announcement_id);
     }
 
     // delete announcement by id
     @DeleteMapping("/{announcement_id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable int announcement_id) {
 
         Optional<Announcement> announcementOptional = announcementRepository.findById(announcement_id);
@@ -48,12 +52,14 @@ public class AnnouncementController {
     }
 
     // add an announcement
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add-announcement")
     Announcement addAnnouncement(@RequestBody Announcement announcement) {
         return  announcementRepository.save(announcement);
     }
 
     // update an announcement
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{announcement_id}/update-announcement")
     public ResponseEntity<Announcement> updateAnnouncement(@PathVariable int announcement_id, @RequestBody Announcement announcementDetails){
 

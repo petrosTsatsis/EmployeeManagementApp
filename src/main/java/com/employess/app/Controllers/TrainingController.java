@@ -8,6 +8,7 @@ import com.employess.app.Repositories.TrainingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,18 +26,21 @@ public class TrainingController {
     private EmployeeRepository employeeRepository;
 
     // get all trainings
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Training> getAllTrainings(){
         return trainingRepository.findAll();
     }
 
     //get training by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{training_id}")
     Optional<Training> get(@PathVariable int training_id){
         return trainingRepository.findById(training_id);
     }
 
     // delete training by id
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{training_id}")
     public ResponseEntity<String> delete(@PathVariable int training_id) {
         Optional<Training> trainingOptional = trainingRepository.findById(training_id);
@@ -61,12 +65,14 @@ public class TrainingController {
     }
 
     // add a training session
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add-training")
     Training addTraining(@RequestBody Training training) {
         return  trainingRepository.save(training);
     }
 
     // update a training session
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{training_id}/update-training")
     public ResponseEntity<Training> updateTraining(@PathVariable int training_id, @RequestBody Training trainingDetails){
 
@@ -95,6 +101,7 @@ public class TrainingController {
     }
 
     // add an employee to a training session
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/{training_id}/employees/{employee_id}/add-to-training")
     Employee addEmployee (@PathVariable int training_id, @PathVariable int employee_id){
 
@@ -138,6 +145,8 @@ public class TrainingController {
         return employee;
     }
 
+    // view the participants of a training session
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{training_id}/viewParticipants")
     List<Employee> trainingParticipants(@PathVariable int training_id){
 

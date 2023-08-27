@@ -7,6 +7,7 @@ import com.employess.app.Repositories.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,18 +25,21 @@ public class ReviewController {
     private EmployeeRepository employeeRepository;
 
     // get all reviews
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("")
     List<Review> getAllReviews(){
         return reviewRepository.findAll();
     }
 
     // get review by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping("/{review_id}")
     Optional<Review> get(@PathVariable int review_id){
         return reviewRepository.findById(review_id);
     }
 
     // delete review by id
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @DeleteMapping("/{review_id}")
     public ResponseEntity<String> delete(@PathVariable int review_id) {
 
@@ -50,6 +54,7 @@ public class ReviewController {
     }
 
     // add review to employee
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PostMapping("/employees/{employee_id}/add-review")
     public ResponseEntity<Review> addReview(
             @PathVariable int employee_id,
@@ -85,6 +90,7 @@ public class ReviewController {
     }
 
     //update a review
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @PutMapping("/{review_id}/update-review")
     public ResponseEntity<Review> updateReview(@PathVariable int review_id, @RequestBody Review reviewDetails){
 
