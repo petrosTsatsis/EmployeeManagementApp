@@ -46,8 +46,8 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/signin").permitAll()
-                .antMatchers("/api/auth/signup").permitAll()
+                .authorizeRequests().antMatchers("/signin").permitAll()
+                .antMatchers("/signup").permitAll()
                 .antMatchers("/Home").permitAll()
 
                 .anyRequest().authenticated();
